@@ -10,64 +10,61 @@ class SimCLRAugmentation:
         self,
         image_size: int,
         color_jitter: float = 0.4,
-        gaussian_blur: float = 0.1,
+        gaussian_blur_prob: float = 0.5,
+        min_scale: float = 0.08,
         horizontal_flip: bool = True,
-        seed: int = 42,
+        random_gray_prob: float = 0.2,
     ):
         """
         defaulted to initial args of SimCLR paper:
         https://arxiv.org/abs/2002.05709
+        
         """
+        assert 0.0 <= color_jitter <= 1.0, "Color jitter should be between 0 and 1"
+        assert (
+            0.0 <= gaussian_blur_prob <= 1.0
+        ), "Gaussian blur should be between 0 and 1"
+        assert (
+            0.0 <= random_gray_prob <= 1.0
+        ), "Random gray probability should be between 0 and 1"
+        assert 0.0 <= min_scale <= 1.0, "Min scale should be between 0 and 1"
 
-        self.image_size = image_size
-        assert 0 <= color_jitter <= 1, "Color jitter should be between 0 and 1"
-        self.color_jitter = color_jitter
-        assert 0 <= gaussian_blur <= 1, "Gaussian blur should be between 0 and 1"
-        self.gaussian_blur = gaussian_blur
-        self.horizontal_flip = horizontal_flip
-
-        seed_everything(seed)
+        # kernel size as in SimCLR: 0.1 * image_size (must be odd)
+        ksize = int(0.1 * image_size)
+        ksize = ksize + 1 if ksize % 2 == 0 else ksize
 
         # Apply transforms step by step as in original SimCLR paper
         self.transform = transforms.Compose(
             [
-                # Step 1: Random resized crop
-                transforms.RandomResizedCrop(image_size, scale=(0.2, 1.0)),
-                # Step 2: Random horizontal flip
+                transforms.RandomResizedCrop(image_size, scale=(min_scale, 1.0)),
                 (
-                    transforms.RandomHorizontalFlip(p=0.5)
+                    transforms.RandomHorizontalFlip()
                     if horizontal_flip
                     else transforms.Lambda(lambda x: x)
                 ),
-                # Step 3: Color jitter (applied with probability 0.8)
-                (
-                    transforms.RandomApply(
-                        [
-                            transforms.ColorJitter(
-                                brightness=color_jitter,
-                                contrast=color_jitter,
-                                saturation=color_jitter,
-                                hue=0.1,
-                            )
-                        ],
-                        p=0.8,
-                    )
-                    if color_jitter > 0
-                    else transforms.Lambda(lambda x: x)
+                transforms.RandomApply(
+                    [
+                        transforms.ColorJitter(
+                            brightness=color_jitter,
+                            contrast=color_jitter,
+                            saturation=color_jitter,
+                            hue=0.1,
+                        )
+                    ],
+                    p=0.8,
                 ),
-                # Step 4: Random grayscale conversion
-                transforms.RandomGrayscale(p=0.2),
-                # Step 5: Gaussian blur (applied with probability based on gaussian_blur param)
-                (
-                    transforms.RandomApply(
-                        [transforms.GaussianBlur(kernel_size=23, sigma=(0.1, 2.0))],
-                        p=gaussian_blur,
-                    )
-                    if gaussian_blur > 0
-                    else transforms.Lambda(lambda x: x)
+                transforms.RandomGrayscale(p=random_gray_prob),
+                transforms.RandomApply(
+                    [transforms.GaussianBlur(kernel_size=ksize, sigma=(0.1, 2.0))],
+                    p=gaussian_blur_prob,
                 ),
-                # Step 6: Convert to tensor and normalize
                 transforms.ToTensor(),
                 transforms.Normalize(mean=IMAGENET_MEAN, std=IMAGENET_STD),
             ]
         )
+
+    def __call__(self, image):
+        """
+        Apply the SimCLR augmentation to the input image.
+        """
+        return self.transform(image)
