@@ -1,10 +1,5 @@
-import argparse
-from utils.write_ffcv import write_dataset_to_ffcv
 import os
 import torchvision
-from torchvision.transforms import ToPILImage
-import shutil
-
 
 def load_dataset(
     data_dir: str,
