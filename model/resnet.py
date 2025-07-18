@@ -6,13 +6,13 @@ from .heads import SimCLRProjectionHeadV2
 valid_backbone_names = ["resnet18"]
 
 
-class SimCLR(nn.Module):
+class ResnetSimCLR(nn.Module):
     def __init__(self, backbone: str = "resnet18", output_dim: int = 128):
         super().__init__()
         assert (
             backbone in valid_backbone_names
         ), f"Invalid base model. Choose from {valid_backbone_names}"
-        self.backbone = backbone
+        self.backbone = nn.Sequential(*list(backbone.children())[:-1])
         self.projection_head = SimCLRProjectionHeadV2(
             input_dim=512, output_dim=output_dim, hidden_dim=128
         )
