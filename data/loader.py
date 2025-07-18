@@ -26,55 +26,35 @@ def download_and_prepare_mnist(target_dir):
     print("MNIST downloaded and prepared.")
     return target_dir
 
+def load_dataset(
+    data_dir: str,
+    output_path: str,
+    resolution: int = 28,
+    max_images: int = None,
+):
+
+    if data_dir is None:
+        data_dir = download_and_prepare_mnist("./mnist_imagefolder")
+        print(f"\033[92mNo data directory provided. Downloaded MNIST to {data_dir}.\033[0m")
+    else:
+        assert os.path.isdir(
+            data_dir
+        ), f"Data directory {data_dir} does not exist."
+
+    print(f"\033[92mUsing data directory: {data_dir}\033[0m")
+
+    assert not os.path.exists(output_path) or os.path.isfile(
+        output_path
+    ), f"Output path {output_path} must be a file."
+    assert resolution > 0, "Resolution must be a positive integer."
+    assert (
+        max_images is None or max_images > 0
+    ), "Max images must be a positive integer or None."
 
 
-parser = argparse.ArgumentParser(
-    description="Convert image dataset to FFCV .beton format"
-)
-
-parser.add_argument(
-    "--data_dir", type=str, default=None, help="Path to image folder. If not provided, MNIST will be downloaded."
-)
-parser.add_argument(
-    "--output",
-    type=str,
-    required=True,
-    help="Output .beton file path",
-)
-parser.add_argument(
-    "--resolution",
-    type=int,
-    default=28,
-    help="Max image resolution (default: 28 for MNIST)",
-)
-parser.add_argument(
-    "--max_images", type=int, default=None, help="Optionally limit number of images"
-)
-
-args = parser.parse_args()
-
-if args.data_dir is None:
-    args.data_dir = download_and_prepare_mnist("./mnist_imagefolder")
-    print(f"\033[92mNo data directory provided. Downloaded MNIST to {args.data_dir}.\033[0m")
-else:
-    assert os.path.isdir(
-        args.data_dir
-    ), f"Data directory {args.data_dir} does not exist."
-
-print(f"\033[92mUsing data directory: {args.data_dir}\033[0m")
-
-assert not os.path.exists(args.output) or os.path.isfile(
-    args.output
-), f"Output path {args.output} must be a file."
-assert args.resolution > 0, "Resolution must be a positive integer."
-assert (
-    args.max_images is None or args.max_images > 0
-), "Max images must be a positive integer or None."
-
-
-write_dataset_to_ffcv(
-    data_dir=args.data_dir,
-    output_path=args.output,
-    resolution=args.resolution,
-    max_images=args.max_images,
-)
+    write_dataset_to_ffcv(
+        data_dir=data_dir,
+        output_path=output_path,
+        resolution=resolution,
+        max_images=max_images,
+    )
