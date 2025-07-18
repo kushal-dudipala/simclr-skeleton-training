@@ -18,18 +18,16 @@ class SimCLRProjectionHeadV2(nn.Module):
         batch_norm: bool = True,
     ) -> None:
         super().__init__()
-        
+
         self.net = nn.Sequential(
             # layer 1
             nn.Linear(input_dim, hidden_dim, bias=not batch_norm),
             nn.BatchNorm1d(hidden_dim) if batch_norm else nn.Identity(),
             nn.ReLU(),
-            
             # layer 2
             nn.Linear(hidden_dim, hidden_dim, bias=not batch_norm),
             nn.BatchNorm1d(hidden_dim) if batch_norm else nn.Identity(),
             nn.ReLU(),
-             
             # layer 3
             nn.Linear(hidden_dim, output_dim, bias=True),
             nn.BatchNorm1d(output_dim) if batch_norm else nn.Identity(),
@@ -38,8 +36,6 @@ class SimCLRProjectionHeadV2(nn.Module):
     def forward(self, x: Tensor) -> Tensor:
         """
         Forward pass through the projection head.
-        
+
         """
         return self.net(x)
-
-        

@@ -2,7 +2,6 @@ import torch
 import torch.nn.functional as F
 
 
-
 """
 NT-Xent loss implementation for contrastive learning.
 Based on "Improved Deep Metric Learning with Multi-class N-pair Loss Objective"
@@ -17,12 +16,12 @@ def nt_xent_loss(z1, z2, temperature=0.5):
     """
     N = z1.size(0)
     # (2N, D)
-    z = torch.cat([z1, z2], dim=0) 
-    # L2 normalization              
-    z = F.normalize(z, dim=1)                    
+    z = torch.cat([z1, z2], dim=0)
+    # L2 normalization
+    z = F.normalize(z, dim=1)
 
     sim_matrix = torch.matmul(z, z.T)
-    # (2N, 2N)           
+    # (2N, 2N)
     sim_matrix = sim_matrix / temperature
 
     # Create positive pair indices
@@ -31,7 +30,7 @@ def nt_xent_loss(z1, z2, temperature=0.5):
 
     # Mask to zero out self-similarity
     mask = torch.eye(2 * N, device=z.device).bool()
-    sim_matrix = sim_matrix.masked_fill(mask, float('-inf'))
+    sim_matrix = sim_matrix.masked_fill(mask, float("-inf"))
 
     # Cross-entropy between true positive and all others
     loss = F.cross_entropy(sim_matrix, labels)
