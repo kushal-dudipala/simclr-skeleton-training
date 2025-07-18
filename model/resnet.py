@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 import torchvision.models as models
-from loss import nt_xent_loss 
+from .loss import nt_xent_loss 
 
 valid_backbone_names = [
     'resnet18'
