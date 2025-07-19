@@ -10,6 +10,11 @@ def write_dataset_to_ffcv(
     max_images: int = None,
     num_workers: int = 4,
 ):
+    """
+    Takes a pytorch dataset and writes it to an FFCV format file as a .ffcv file.
+    
+    """
+    
     if max_images:
         dataset = torch.utils.data.Subset(dataset, range(min(len(dataset), max_images)))
 
