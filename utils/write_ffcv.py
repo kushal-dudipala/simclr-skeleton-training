@@ -30,3 +30,14 @@ def write_dataset_to_ffcv(
     print(f"Writing {len(dataset)} images to {output_path} in ffcv format...")
     writer.from_indexed_dataset(dataset)
     print("Done.")
+    return
+
+def from_indexed_dataset(self, dataset):
+    """Write dataset to FFCV format by iterating through indexed dataset."""
+    for i in range(len(dataset)):
+        image, label = dataset[i]
+        self.write({
+            "image": image,
+            "label": label
+        })
+        
