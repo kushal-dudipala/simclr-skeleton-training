@@ -33,8 +33,14 @@ raw_data = load_dataset(
     output_path="datasets/cifar10",
     resolution=image_size,
     max_images=None,
-    transform=sim_clr_transform.transform
 )
+
+####################################################################################
+#                                                                                  #
+#          moved all ffcv files to ffcv.py for self containment of ffcv.           #
+#                                                                                  #
+####################################################################################
+
 
 # convert raw dataset to FFCV format
 write_dataset_to_ffcv(
@@ -46,6 +52,9 @@ write_dataset_to_ffcv(
 )
 
 # load dataset from FFCV
+
+
+
 ffcv_dataset = torchvision.datasets.FFCVDataset(
     "datasets/cifar10/simclr_train.ffcv",
     num_workers=num_workers,
