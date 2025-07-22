@@ -12,9 +12,9 @@ def write_dataset_to_ffcv(
 ):
     """
     Takes a pytorch dataset and writes it to an FFCV format file as a .ffcv file.
-    
+
     """
-    
+
     if max_images:
         dataset = torch.utils.data.Subset(dataset, range(min(len(dataset), max_images)))
 
@@ -32,12 +32,9 @@ def write_dataset_to_ffcv(
     print("Done.")
     return
 
+
 def from_indexed_dataset(self, dataset):
     """Write dataset to FFCV format by iterating through indexed dataset."""
     for i in range(len(dataset)):
         image, label = dataset[i]
-        self.write({
-            "image": image,
-            "label": label
-        })
-        
+        self.write({"image": image, "label": label})

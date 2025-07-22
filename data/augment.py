@@ -18,7 +18,7 @@ class SimCLRAugmentation:
         """
         defaulted to initial args of SimCLR paper:
         https://arxiv.org/abs/2002.05709
-        
+
         """
         assert 0.0 <= color_jitter <= 1.0, "Color jitter should be between 0 and 1"
         assert (

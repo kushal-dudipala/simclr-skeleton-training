@@ -1,7 +1,7 @@
 import torch
 import torchvision
 from torch import nn
-from model.resnet import ResnetSimCLR    
+from model.resnet import ResnetSimCLR
 from data.augment import SimCLRAugmentation
 from data.loader import load_dataset
 from utils.write_ffcv import write_dataset_to_ffcv
@@ -13,10 +13,10 @@ from tqdm import tqdm
 seed_everything(42)
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-backbone = 'resnet18'
+backbone = "resnet18"
 image_size = 32
 num_workers = 4
-optimizer = 'adam'
+optimizer = "adam"
 learning_rate = 0.001
 weight_decay = 1e-4
 momentum = 0.9
@@ -29,7 +29,7 @@ sim_clr_transform = SimCLRAugmentation(image_size=image_size)
 
 # load raw dataset, either from local directory or download CIFAR-10 dataset
 raw_data = load_dataset(
-    data_dir=None,  
+    data_dir=None,
     output_path="datasets/cifar10",
     resolution=image_size,
     max_images=None,
@@ -48,28 +48,32 @@ write_dataset_to_ffcv(
     output_path="datasets/cifar10/simclr_train.ffcv",
     resolution=image_size,
     max_images=None,
-    num_workers=num_workers
+    num_workers=num_workers,
 )
 
 # load dataset from FFCV
 
 
-
 ffcv_dataset = torchvision.datasets.FFCVDataset(
     "datasets/cifar10/simclr_train.ffcv",
     num_workers=num_workers,
-    transform=sim_clr_transform.transform
-)   
+    transform=sim_clr_transform.transform,
+)
 
 # loss function
 criterion = SimCLRLoss().to(device)
 
 # optimizer
-if optimizer == 'adam':
+if optimizer == "adam":
     optimizer = Adam(model.parameters(), lr=learning_rate, weight_decay=weight_decay)
-elif optimizer == 'sgd':
-    optimizer = torch.optim.SGD(model.parameters(), learning_rate=learning_rate, momentum=momentum, weight_decay=weight_decay)
-elif optimizer == 'muon':
+elif optimizer == "sgd":
+    optimizer = torch.optim.SGD(
+        model.parameters(),
+        learning_rate=learning_rate,
+        momentum=momentum,
+        weight_decay=weight_decay,
+    )
+elif optimizer == "muon":
     raise NotImplementedError("Muon optimizer is not implemented yet.")
 
 for epoch in tqdm(range(epochs), desc="Training Epochs"):

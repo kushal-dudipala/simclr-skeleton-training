@@ -9,7 +9,7 @@ def ffcv_dataloader(
     batch_size: int = 32,
     num_workers: int = 4,
     order: OrderOption = OrderOption.RANDOM,
-    transform=None,    
+    transform=None,
 ):
     # Below is from FFCV documentaion on Order Options:
     # ---------------------------------------------------------
@@ -23,16 +23,13 @@ def ffcv_dataloader(
     # ORDERING = OrderOption.QUASI_RANDOM
     raise NotImplementedError("FFCV dataloader is not implemented yet.")
 
-    pipeline: List[Operation] = [
-        
-    ]
-    
+    pipeline: List[Operation] = []
+
     loader = Loader(
         baton_path,
         batch_size=batch_size,
         num_workers=num_workers,
         order=order,
         pipeline=pipeline,
-        recompile=True,     # added recompile to make sure transformations recompile pe repoch
+        recompile=True,  # added recompile to make sure transformations recompile pe repoch
     )
-        

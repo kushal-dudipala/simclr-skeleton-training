@@ -1,6 +1,7 @@
 import os
 import torchvision
 
+
 def load_dataset(
     data_dir: str,
     output_path: str,
