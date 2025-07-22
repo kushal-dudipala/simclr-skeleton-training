@@ -21,16 +21,18 @@ def ffcv_dataloader(
 
     # Memory-efficient but not truly random loading -> low memory usage
     # ORDERING = OrderOption.QUASI_RANDOM
-    
-    # pipeline: List[Operation] = [
+    raise NotImplementedError("FFCV dataloader is not implemented yet.")
+
+    pipeline: List[Operation] = [
         
-    # ]
+    ]
     
     loader = Loader(
         baton_path,
         batch_size=batch_size,
         num_workers=num_workers,
         order=order,
+        pipeline=pipeline,
+        recompile=True,     # added recompile to make sure transformations recompile pe repoch
     )
-    raise NotImplementedError("FFCV dataloader is not implemented yet.")
         
