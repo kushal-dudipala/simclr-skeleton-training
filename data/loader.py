@@ -6,19 +6,18 @@ def load_dataset(
     output_path: str,
     resolution: int = 28,
     max_images: int = None,
-    transform=None,
 ):
 
     if data_dir is None:
         dataset = torchvision.datasets.CIFAR10(
-            "datasets/cifar10", download=True, transform=transform
+            "datasets/cifar10", download=True, transform=None
         )
         print(
             f"\033[92mNo data directory provided. Downloaded MNIST to {data_dir}.\033[0m"
         )
     else:
         assert os.path.isdir(data_dir), f"Data directory {data_dir} does not exist."
-        dataset = torchvision.datasets.ImageFolder(data_dir, transform=transform)
+        dataset = torchvision.datasets.ImageFolder(data_dir, transform=None)
 
     print(f"\033[92mUsing data directory: {data_dir}\033[0m")
 
